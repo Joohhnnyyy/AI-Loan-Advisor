@@ -17,6 +17,10 @@ services:
         sync: false
       - key: MAIL_PASSWORD
         sync: false
+      - key: MAIL_PORT
+        value: 587
+      - key: MAIL_STARTTLS
+        value: True
       - key: MAIL_SSL_TLS
         value: False
       - key: API_ENDPOINT

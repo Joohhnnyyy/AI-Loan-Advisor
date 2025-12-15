@@ -26,6 +26,8 @@ APPWRITE_API_KEY = os.getenv("APPWRITE_API_KEY")
 MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
 MAIL_SERVER = os.getenv("MAIL_SERVER", "smtp.gmail.com")
 MAIL_PORT = int(os.getenv("MAIL_PORT", 587))
+MAIL_STARTTLS = os.getenv("MAIL_STARTTLS", "true").strip().lower() in {"1", "true", "t", "yes", "y"}
+MAIL_SSL_TLS = os.getenv("MAIL_SSL_TLS", "false").strip().lower() in {"1", "true", "t", "yes", "y"}
 
 # Define the scope for Gmail API
 SCOPES = ["https://www.googleapis.com/auth/gmail.send"]
@@ -116,13 +118,26 @@ async def send_email_with_aiosmtplib(to_email, subject, body, file_path: str, re
             message.attach(attachment)
 
             # ---- Send via SMTP ----
+            use_tls = False
+            start_tls = False
+            if MAIL_PORT == 465:
+                use_tls = True
+            elif MAIL_PORT == 587:
+                start_tls = True
+            else:
+                if MAIL_SSL_TLS:
+                    use_tls = True
+                elif MAIL_STARTTLS:
+                    start_tls = True
+
             await aiosmtplib.send(
                 message,
                 hostname=MAIL_SERVER,
                 port=MAIL_PORT,
                 username=NO_REPLY_EMAIL,
                 password=MAIL_PASSWORD,
-                use_tls=True,
+                use_tls=use_tls,
+                start_tls=start_tls,
                 timeout=30
             )
 
@@ -207,7 +222,6 @@ def send_email_with_url_attachment(to_email, subject, body, file_url: str, retri
             print(f"Failed to send email: {e}. Retrying in {delay} seconds...")
             print(traceback.format_exc())
             time.sleep(delay)
-
 
 
 
