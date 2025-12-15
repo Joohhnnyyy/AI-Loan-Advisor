@@ -1,0 +1,29 @@
+services:
+  - type: web
+    runtime: docker
+    name: ai-loan-advisor-backend
+    dockerfilePath: ./Dockerfile
+    region: oregon
+    plan: free
+    numInstances: 1
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: DEFAULT_MODEL
+        value: llama-3.3-70b-versatile
+      - key: NO_REPLY_EMAIL
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: MAIL_SSL_TLS
+        value: False
+      - key: API_ENDPOINT
+        sync: false
+      - key: PROJECT_ID
+        sync: false
+      - key: APPWRITE_API_KEY
+        sync: false
+      - key: BUCKET_ID
+        sync: false
